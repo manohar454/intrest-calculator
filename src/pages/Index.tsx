@@ -1,14 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { MainApp } from "@/components/MainApp";
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [userName, setUserName] = useState<string | null>(null);
+
+  const handleEnter = (name: string) => {
+    setUserName(name);
+  };
+
+  const handleLogout = () => {
+    setUserName(null);
+  };
+
+  if (!userName) {
+    return <WelcomeScreen onEnter={handleEnter} />;
+  }
+
+  return <MainApp userName={userName} onLogout={handleLogout} />;
 };
 
 export default Index;
