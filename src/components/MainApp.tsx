@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { InterestCalculator } from "./InterestCalculator";
 import { BasicCalculator } from "./BasicCalculator";
@@ -11,11 +11,11 @@ interface MainAppProps {
 
 type TabType = "interest" | "calculator";
 
-export function MainApp({ userName, onLogout }: MainAppProps) {
+export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onLogout }, ref) => {
   const [activeTab, setActiveTab] = useState<TabType>("interest");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div ref={ref} className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50 no-print">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -80,4 +80,6 @@ export function MainApp({ userName, onLogout }: MainAppProps) {
       </footer>
     </div>
   );
-}
+});
+
+MainApp.displayName = "MainApp";

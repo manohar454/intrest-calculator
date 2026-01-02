@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calculator, TrendingUp, User } from "lucide-react";
@@ -7,7 +7,7 @@ interface WelcomeScreenProps {
   onEnter: (userName: string) => void;
 }
 
-export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
+export const WelcomeScreen = forwardRef<HTMLDivElement, WelcomeScreenProps>(({ onEnter }, ref) => {
   const [userName, setUserName] = useState("");
   const [error, setError] = useState("");
 
@@ -21,7 +21,7 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/30">
+    <div ref={ref} className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/30">
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo and Title */}
         <div className="text-center mb-8">
@@ -89,4 +89,6 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
       </div>
     </div>
   );
-}
+});
+
+WelcomeScreen.displayName = "WelcomeScreen";
