@@ -46,11 +46,26 @@ export function formatDate(date: Date): string {
 }
 
 /**
- * Calculate the number of days between two dates
+ * Calculate the number of days between two dates using the
+ * Banking / PN Loan (30/360) method.
+ *
+ * Formula (matches manual Y-M-D subtraction with borrow at 30 days / 12 months):
+ *   days = (Y2 - Y1) * 360 + (M2 - M1) * 30 + (D2 - D1)
+ *
+ * Example: 15/11/2024 → 07/06/2026
+ *   = (2026-2024)*360 + (6-11)*30 + (7-15)
+ *   = 720 - 150 - 8 = 562 days  (i.e. 1 year 6 months 22 days)
  */
 export function calculateDays(startDate: Date, endDate: Date): number {
-  const diffTime = endDate.getTime() - startDate.getTime();
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const y1 = startDate.getFullYear();
+  const m1 = startDate.getMonth() + 1;
+  const d1 = startDate.getDate();
+
+  const y2 = endDate.getFullYear();
+  const m2 = endDate.getMonth() + 1;
+  const d2 = endDate.getDate();
+
+  return (y2 - y1) * 360 + (m2 - m1) * 30 + (d2 - d1);
 }
 
 /**
