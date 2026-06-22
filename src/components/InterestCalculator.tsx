@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, IndianRupee, Percent, User, Calculator } from "lucide-react";
-import { 
-  parseDate, 
-  calculateInterest, 
-  formatCurrency, 
+import { Calendar, IndianRupee, Percent, User, Calculator, Clock } from "lucide-react";
+import {
+  parseDate,
+  calculateInterest,
+  calculateInterestByDuration,
+  formatCurrency,
   InterestResult,
-  formatDate 
+  formatDate
 } from "@/lib/interestCalculations";
 import { InterestStatement } from "./InterestStatement";
 import { toast } from "@/hooks/use-toast";
@@ -18,17 +19,27 @@ interface InterestCalculatorProps {
   userName: string;
 }
 
+type CalcMode = "dates" | "duration";
+
 export function InterestCalculator({ userName }: InterestCalculatorProps) {
+  const [mode, setMode] = useState<CalcMode>("dates");
+
   const [borrowerName, setBorrowerName] = useState("");
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
+
+  // Date range mode
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // Duration mode
+  const [years, setYears] = useState("");
+  const [months, setMonths] = useState("");
+
   const [result, setResult] = useState<InterestResult | null>(null);
   const [showStatement, setShowStatement] = useState(false);
 
   const handleCalculate = () => {
-    // Validation
     if (!borrowerName.trim()) {
       toast({ title: "Error", description: "Please enter borrower name", variant: "destructive" });
       return;
@@ -46,30 +57,50 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
       return;
     }
 
-    const start = parseDate(startDate);
-    if (!start) {
-      toast({ title: "Error", description: "Please enter a valid start date (DD/MM/YYYY)", variant: "destructive" });
-      return;
+    let calculationResult: InterestResult;
+
+    if (mode === "dates") {
+      const start = parseDate(startDate);
+      if (!start) {
+        toast({ title: "Error", description: "Please enter a valid start date (DD/MM/YYYY)", variant: "destructive" });
+        return;
+      }
+
+      const end = parseDate(endDate);
+      if (!end) {
+        toast({ title: "Error", description: "Please enter a valid end date (DD/MM/YYYY)", variant: "destructive" });
+        return;
+      }
+
+      if (end <= start) {
+        toast({ title: "Error", description: "End date must be after start date", variant: "destructive" });
+        return;
+      }
+
+      calculationResult = calculateInterest(principalNum, rateNum, start, end);
+    } else {
+      const yearsNum = parseFloat(years) || 0;
+      const monthsNum = parseFloat(months) || 0;
+
+      if (yearsNum < 0 || monthsNum < 0) {
+        toast({ title: "Error", description: "Years and months cannot be negative", variant: "destructive" });
+        return;
+      }
+
+      if (yearsNum === 0 && monthsNum === 0) {
+        toast({ title: "Error", description: "Please enter a valid duration", variant: "destructive" });
+        return;
+      }
+
+      calculationResult = calculateInterestByDuration(principalNum, rateNum, yearsNum, monthsNum);
     }
 
-    const end = parseDate(endDate);
-    if (!end) {
-      toast({ title: "Error", description: "Please enter a valid end date (DD/MM/YYYY)", variant: "destructive" });
-      return;
-    }
-
-    if (end <= start) {
-      toast({ title: "Error", description: "End date must be after start date", variant: "destructive" });
-      return;
-    }
-
-    const calculationResult = calculateInterest(principalNum, rateNum, start, end);
     setResult(calculationResult);
     setShowStatement(true);
-    
-    toast({ 
-      title: "Calculation Complete", 
-      description: `Interest calculated for ${calculationResult.months.toFixed(2)} months` 
+
+    toast({
+      title: "Calculation Complete",
+      description: `Interest calculated for ${calculationResult.months.toFixed(2)} months`
     });
   };
 
@@ -79,6 +110,8 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
     setRate("");
     setStartDate("");
     setEndDate("");
+    setYears("");
+    setMonths("");
     setResult(null);
     setShowStatement(false);
   };
@@ -90,8 +123,10 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         borrowerName={borrowerName}
         principal={parseFloat(principal)}
         rate={parseFloat(rate)}
-        startDate={startDate}
-        endDate={endDate}
+        startDate={mode === "dates" ? startDate : undefined}
+        endDate={mode === "dates" ? endDate : undefined}
+        durationYears={mode === "duration" ? (parseFloat(years) || 0) : undefined}
+        durationMonths={mode === "duration" ? (parseFloat(months) || 0) : undefined}
         result={result}
         onBack={() => setShowStatement(false)}
         onNewCalculation={handleClear}
@@ -109,6 +144,34 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         <p className="text-sm text-muted-foreground">Promissory Note / Rural Loan Method</p>
       </CardHeader>
       <CardContent className="space-y-5">
+        {/* Mode Toggle */}
+        <div className="flex rounded-lg bg-muted p-1 gap-1">
+          <button
+            type="button"
+            onClick={() => setMode("dates")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+              mode === "dates"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            Date Range
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("duration")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+              mode === "duration"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Duration
+          </button>
+        </div>
+
         {/* Borrower Name */}
         <div className="space-y-2">
           <Label htmlFor="borrowerName" className="flex items-center gap-2">
@@ -155,32 +218,68 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         </div>
 
         {/* Date Range */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="startDate" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              Start Date
-            </Label>
-            <Input
-              id="startDate"
-              placeholder="DD/MM/YYYY"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
+        {mode === "dates" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startDate" className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                Start Date
+              </Label>
+              <Input
+                id="startDate"
+                placeholder="DD/MM/YYYY"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="endDate" className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                End Date
+              </Label>
+              <Input
+                id="endDate"
+                placeholder="DD/MM/YYYY"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="endDate" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              End Date
-            </Label>
-            <Input
-              id="endDate"
-              placeholder="DD/MM/YYYY"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+        )}
+
+        {/* Duration */}
+        {mode === "duration" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="years" className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                Years
+              </Label>
+              <Input
+                id="years"
+                type="number"
+                min="0"
+                placeholder="e.g., 6"
+                value={years}
+                onChange={(e) => setYears(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="months" className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                Months
+              </Label>
+              <Input
+                id="months"
+                type="number"
+                min="0"
+                placeholder="e.g., 0"
+                value={months}
+                onChange={(e) => setMonths(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Info Box */}
         <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground">

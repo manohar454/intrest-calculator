@@ -94,7 +94,7 @@ export function calculateCompoundInterest(principal: number, rate: number, month
 }
 
 /**
- * Calculate all interest values
+ * Calculate all interest values from date range
  */
 export function calculateInterest(
   principal: number,
@@ -104,13 +104,39 @@ export function calculateInterest(
 ): InterestResult {
   const days = calculateDays(startDate, endDate);
   const months = calculateMonths(days);
-  
+
   const simpleInterest = calculateSimpleInterest(principal, rate, months);
   const compoundInterest = calculateCompoundInterest(principal, rate, months);
-  
+
   return {
     days,
     months,
+    simpleInterest,
+    compoundInterest,
+    totalAmountSI: principal + simpleInterest,
+    totalAmountCI: principal + compoundInterest,
+  };
+}
+
+/**
+ * Calculate all interest values from duration (years + months)
+ * Banking method: 1 year = 12 months, 1 month = 30 days
+ */
+export function calculateInterestByDuration(
+  principal: number,
+  rate: number,
+  years: number,
+  months: number
+): InterestResult {
+  const totalMonths = years * 12 + months;
+  const days = totalMonths * 30;
+
+  const simpleInterest = calculateSimpleInterest(principal, rate, totalMonths);
+  const compoundInterest = calculateCompoundInterest(principal, rate, totalMonths);
+
+  return {
+    days,
+    months: totalMonths,
     simpleInterest,
     compoundInterest,
     totalAmountSI: principal + simpleInterest,

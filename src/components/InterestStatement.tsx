@@ -8,8 +8,10 @@ interface InterestStatementProps {
   borrowerName: string;
   principal: number;
   rate: number;
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
+  durationYears?: number;
+  durationMonths?: number;
   result: InterestResult;
   onBack: () => void;
   onNewCalculation: () => void;
@@ -22,6 +24,8 @@ export function InterestStatement({
   rate,
   startDate,
   endDate,
+  durationYears,
+  durationMonths,
   result,
   onBack,
   onNewCalculation,
@@ -29,6 +33,8 @@ export function InterestStatement({
   const handlePrint = () => {
     window.print();
   };
+
+  const isDurationMode = durationYears !== undefined || durationMonths !== undefined;
 
   return (
     <div className="w-full max-w-2xl animate-scale-in">
@@ -93,15 +99,29 @@ export function InterestStatement({
             {/* Loan Period */}
             <div>
               <p className="text-sm text-muted-foreground mb-2">Loan Period</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">Start Date</p>
-                  <p className="font-medium">{startDate}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">End Date</p>
-                  <p className="font-medium">{endDate}</p>
-                </div>
+              <div className={`grid gap-4 ${isDurationMode ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-2 md:grid-cols-4'}`}>
+                {!isDurationMode && (
+                  <>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Start Date</p>
+                      <p className="font-medium">{startDate}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">End Date</p>
+                      <p className="font-medium">{endDate}</p>
+                    </div>
+                  </>
+                )}
+                {isDurationMode && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Duration</p>
+                    <p className="font-medium">
+                      {durationYears ? `${durationYears} Year${durationYears !== 1 ? 's' : ''}` : ''}
+                      {durationYears && durationMonths ? ' ' : ''}
+                      {durationMonths ? `${durationMonths} Month${durationMonths !== 1 ? 's' : ''}` : ''}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-xs text-muted-foreground">Total Days</p>
                   <p className="font-medium">{result.days} Days</p>
