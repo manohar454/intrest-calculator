@@ -35,6 +35,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
   // Duration mode
   const [years, setYears] = useState("");
   const [months, setMonths] = useState("");
+  const [days, setDays] = useState("");
 
   const [result, setResult] = useState<InterestResult | null>(null);
   const [showStatement, setShowStatement] = useState(false);
@@ -81,18 +82,19 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
     } else {
       const yearsNum = parseFloat(years) || 0;
       const monthsNum = parseFloat(months) || 0;
+      const daysNum = parseFloat(days) || 0;
 
-      if (yearsNum < 0 || monthsNum < 0) {
-        toast({ title: "Error", description: "Years and months cannot be negative", variant: "destructive" });
+      if (yearsNum < 0 || monthsNum < 0 || daysNum < 0) {
+        toast({ title: "Error", description: "Years, months and days cannot be negative", variant: "destructive" });
         return;
       }
 
-      if (yearsNum === 0 && monthsNum === 0) {
+      if (yearsNum === 0 && monthsNum === 0 && daysNum === 0) {
         toast({ title: "Error", description: "Please enter a valid duration", variant: "destructive" });
         return;
       }
 
-      calculationResult = calculateInterestByDuration(principalNum, rateNum, yearsNum, monthsNum);
+      calculationResult = calculateInterestByDuration(principalNum, rateNum, yearsNum, monthsNum, daysNum);
     }
 
     setResult(calculationResult);
@@ -112,6 +114,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
     setEndDate("");
     setYears("");
     setMonths("");
+    setDays("");
     setResult(null);
     setShowStatement(false);
   };
@@ -127,6 +130,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         endDate={mode === "dates" ? endDate : undefined}
         durationYears={mode === "duration" ? (parseFloat(years) || 0) : undefined}
         durationMonths={mode === "duration" ? (parseFloat(months) || 0) : undefined}
+        durationDays={mode === "duration" ? (parseFloat(days) || 0) : undefined}
         result={result}
         onBack={() => setShowStatement(false)}
         onNewCalculation={handleClear}
@@ -141,7 +145,6 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
           <Calculator className="w-7 h-7 text-primary-foreground" />
         </div>
         <CardTitle className="text-2xl font-serif">Interest Calculator</CardTitle>
-        <p className="text-sm text-muted-foreground">Promissory Note / Rural Loan Method</p>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Mode Toggle */}
@@ -249,7 +252,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
 
         {/* Duration */}
         {mode === "duration" && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div className="space-y-2">
               <Label htmlFor="years" className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-muted-foreground" />
@@ -276,6 +279,20 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
                 placeholder="e.g., 0"
                 value={months}
                 onChange={(e) => setMonths(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="days" className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                Days
+              </Label>
+              <Input
+                id="days"
+                type="number"
+                min="0"
+                placeholder="e.g., 0"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
               />
             </div>
           </div>

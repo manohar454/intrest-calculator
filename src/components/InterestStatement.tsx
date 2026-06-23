@@ -12,6 +12,7 @@ interface InterestStatementProps {
   endDate?: string;
   durationYears?: number;
   durationMonths?: number;
+  durationDays?: number;
   result: InterestResult;
   onBack: () => void;
   onNewCalculation: () => void;
@@ -26,6 +27,7 @@ export function InterestStatement({
   endDate,
   durationYears,
   durationMonths,
+  durationDays,
   result,
   onBack,
   onNewCalculation,
@@ -34,7 +36,8 @@ export function InterestStatement({
     window.print();
   };
 
-  const isDurationMode = durationYears !== undefined || durationMonths !== undefined;
+  const isDurationMode =
+    durationYears !== undefined || durationMonths !== undefined || durationDays !== undefined;
 
   return (
     <div className="w-full max-w-2xl animate-scale-in">
@@ -62,7 +65,6 @@ export function InterestStatement({
           {/* Header */}
           <div className="gradient-primary text-primary-foreground px-6 py-6 text-center">
             <h1 className="text-2xl font-serif font-bold mb-1">INTEREST STATEMENT</h1>
-            <p className="text-primary-foreground/80 text-sm">Promissory Note Loan</p>
           </div>
 
           {/* Content */}
@@ -119,6 +121,8 @@ export function InterestStatement({
                       {durationYears ? `${durationYears} Year${durationYears !== 1 ? 's' : ''}` : ''}
                       {durationYears && durationMonths ? ' ' : ''}
                       {durationMonths ? `${durationMonths} Month${durationMonths !== 1 ? 's' : ''}` : ''}
+                      {(durationYears || durationMonths) && durationDays ? ' ' : ''}
+                      {durationDays ? `${durationDays} Day${durationDays !== 1 ? 's' : ''}` : ''}
                     </p>
                   </div>
                 )}
@@ -188,7 +192,7 @@ export function InterestStatement({
           {/* Watermark Footer */}
           <div className="bg-muted/50 px-6 py-3 text-center">
             <p className="text-xs text-muted-foreground">
-              Interest Calculation Application • Promissory Note / Rural Loan Method
+              Interest Calculation Application
             </p>
           </div>
         </CardContent>

@@ -126,16 +126,17 @@ export function calculateInterestByDuration(
   principal: number,
   rate: number,
   years: number,
-  months: number
+  months: number,
+  days: number = 0
 ): InterestResult {
-  const totalMonths = years * 12 + months;
-  const days = totalMonths * 30;
+  const totalDays = years * 360 + months * 30 + days;
+  const totalMonths = totalDays / 30;
 
   const simpleInterest = calculateSimpleInterest(principal, rate, totalMonths);
   const compoundInterest = calculateCompoundInterest(principal, rate, totalMonths);
 
   return {
-    days,
+    days: totalDays,
     months: totalMonths,
     simpleInterest,
     compoundInterest,
