@@ -73,11 +73,6 @@ export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onL
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 text-center text-sm text-muted-foreground no-print">
-        <p>Interest Calculation Application</p>
-        <p className="text-xs mt-1">Banking / PN Loan Method • 1 Month = 30 Days</p>
-      </footer>
     </div>
   );
 });
