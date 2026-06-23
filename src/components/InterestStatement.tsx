@@ -189,12 +189,6 @@ export function InterestStatement({
             </div>
           </div>
 
-          {/* Watermark Footer */}
-          <div className="bg-muted/50 px-6 py-3 text-center">
-            <p className="text-xs text-muted-foreground">
-              Interest Calculation Application
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
