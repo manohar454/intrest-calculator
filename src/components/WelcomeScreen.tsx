@@ -31,9 +31,6 @@ export const WelcomeScreen = forwardRef<HTMLDivElement, WelcomeScreenProps>(({ o
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-2">
             Interest Calculator
           </h1>
-          <p className="text-muted-foreground">
-            Promissory Note & Rural Loan Method
-          </p>
         </div>
 
         {/* Features */}
