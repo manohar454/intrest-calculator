@@ -156,3 +156,41 @@ export function formatCurrency(amount: number): string {
     maximumFractionDigits: 2,
   }).format(amount);
 }
+
+export interface RateResult {
+  days: number;
+  months: number;
+  interest: number;
+  totalAmount: number;
+  simpleRate: number;   // rupees per 100 per month
+  compoundRate: number; // rupees per 100 per month (monthly compounding)
+}
+
+/**
+ * Given principal, interest paid (or total amount) and duration,
+ * find the rate of interest (₹ per ₹100 per month).
+ *
+ * Simple:   R = (SI * 100) / (P * T)
+ * Compound: R = ((A/P)^(1/T) - 1) * 100
+ */
+export function calculateRate(
+  principal: number,
+  interest: number,
+  totalDays: number
+): RateResult {
+  const months = totalDays / 30;
+  const totalAmount = principal + interest;
+
+  const simpleRate = (interest * 100) / (principal * months);
+  const compoundRate =
+    (Math.pow(totalAmount / principal, 1 / months) - 1) * 100;
+
+  return {
+    days: totalDays,
+    months,
+    interest,
+    totalAmount,
+    simpleRate,
+    compoundRate,
+  };
+}
