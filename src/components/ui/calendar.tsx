@@ -16,6 +16,12 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
+        caption_dropdowns: "flex justify-center gap-1",
+        dropdown:
+          "appearance-none bg-background border border-input rounded-md text-sm px-2 py-1 pointer-events-auto cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring",
+        dropdown_month: "relative",
+        dropdown_year: "relative",
+        vhidden: "hidden",
         caption_label: "text-sm font-medium",
         nav: "space-x-1 flex items-center",
         nav_button: cn(

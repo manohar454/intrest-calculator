@@ -41,6 +41,9 @@ export function DateField({ id, value, onChange }: DateFieldProps) {
             mode="single"
             selected={selected}
             defaultMonth={selected}
+            captionLayout="dropdown-buttons"
+            fromYear={1970}
+            toYear={new Date().getFullYear() + 30}
             onSelect={(date) => date && onChange(formatDate(date))}
             initialFocus
             className={cn("p-3 pointer-events-auto")}
