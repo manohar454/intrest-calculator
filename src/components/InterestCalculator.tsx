@@ -17,6 +17,7 @@ import {
 } from "@/lib/interestCalculations";
 import { InterestStatement } from "./InterestStatement";
 import { RateResultCard } from "./RateResultCard";
+import { DateField } from "./DateField";
 import { toast } from "@/hooks/use-toast";
 
 interface InterestCalculatorProps {
@@ -349,24 +350,14 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 Start Date
               </Label>
-              <Input
-                id="startDate"
-                placeholder="DD/MM/YYYY"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+              <DateField id="startDate" value={startDate} onChange={setStartDate} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="endDate" className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 End Date
               </Label>
-              <Input
-                id="endDate"
-                placeholder="DD/MM/YYYY"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+              <DateField id="endDate" value={endDate} onChange={setEndDate} />
             </div>
           </div>
         )}
