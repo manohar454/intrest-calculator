@@ -1,9 +1,95 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, useDayPicker, useNavigation, type CaptionProps } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function ScrollableCaption({ displayMonth }: CaptionProps) {
+  const { goToMonth, nextMonth, previousMonth } = useNavigation();
+  const { fromDate, toDate } = useDayPicker();
+
+  const fromYear = fromDate?.getFullYear() ?? 1970;
+  const toYear = toDate?.getFullYear() ?? new Date().getFullYear() + 30;
+  const years = React.useMemo(
+    () => Array.from({ length: toYear - fromYear + 1 }, (_, i) => fromYear + i),
+    [fromYear, toYear],
+  );
+
+  return (
+    <div className="flex items-center justify-between gap-1 pb-2">
+      <button
+        type="button"
+        disabled={!previousMonth}
+        onClick={() => previousMonth && goToMonth(previousMonth)}
+        className={cn(buttonVariants({ variant: "outline" }), "h-8 w-8 p-0 disabled:opacity-40")}
+        aria-label="Previous month"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+
+      <div className="flex items-center gap-1">
+        <Select
+          value={String(displayMonth.getMonth())}
+          onValueChange={(v) => goToMonth(new Date(displayMonth.getFullYear(), Number(v), 1))}
+        >
+          <SelectTrigger className="h-8 w-[7.5rem] text-sm font-medium">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="max-h-60 overflow-y-auto bg-popover z-50">
+            {MONTHS.map((m, i) => (
+              <SelectItem key={m} value={String(i)}>
+                {m}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={String(displayMonth.getFullYear())}
+          onValueChange={(v) => goToMonth(new Date(Number(v), displayMonth.getMonth(), 1))}
+        >
+          <SelectTrigger className="h-8 w-[5.5rem] text-sm font-medium">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="max-h-60 overflow-y-auto bg-popover z-50">
+            {years.map((y) => (
+              <SelectItem key={y} value={String(y)}>
+                {y}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <button
+        type="button"
+        disabled={!nextMonth}
+        onClick={() => nextMonth && goToMonth(nextMonth)}
+        className={cn(buttonVariants({ variant: "outline" }), "h-8 w-8 p-0 disabled:opacity-40")}
+        aria-label="Next month"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -52,6 +138,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       components={{
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+        Caption: ScrollableCaption,
       }}
       {...props}
     />
