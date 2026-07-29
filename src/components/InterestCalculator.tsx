@@ -24,10 +24,11 @@ interface InterestCalculatorProps {
   userName: string;
 }
 
-type CalcMode = "dates" | "duration" | "rate";
+type CalcMode = "interest" | "rate";
 
 export function InterestCalculator({ userName }: InterestCalculatorProps) {
-  const [mode, setMode] = useState<CalcMode>("dates");
+  const [mode, setMode] = useState<CalcMode>("interest");
+  const [inputMode, setInputMode] = useState<"dates" | "duration">("dates");
 
   const [borrowerName, setBorrowerName] = useState("");
   const [principal, setPrincipal] = useState("");
@@ -43,7 +44,6 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
   const [days, setDays] = useState("");
 
   // Find-rate mode
-  const [rateSubMode, setRateSubMode] = useState<"dates" | "duration">("duration");
   const [interestPaid, setInterestPaid] = useState("");
   const [rateResult, setRateResult] = useState<RateResult | null>(null);
 
@@ -73,7 +73,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
 
     let calculationResult: InterestResult;
 
-    if (mode === "dates") {
+    if (mode === "interest" && inputMode === "dates") {
       const start = parseDate(startDate);
       if (!start) {
         toast({ title: "Error", description: "Please enter a valid start date (DD/MM/YYYY)", variant: "destructive" });
@@ -92,7 +92,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
       }
 
       calculationResult = calculateInterest(principalNum, rateNum, start, end);
-    } else if (mode === "duration") {
+    } else if (mode === "interest") {
       const yearsNum = parseFloat(years) || 0;
       const monthsNum = parseFloat(months) || 0;
       const daysNum = parseFloat(days) || 0;
@@ -117,7 +117,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
       }
 
       let totalDays = 0;
-      if (rateSubMode === "dates") {
+      if (inputMode === "dates") {
         const start = parseDate(startDate);
         const end = parseDate(endDate);
         if (!start || !end) {
