@@ -24,10 +24,11 @@ interface InterestCalculatorProps {
   userName: string;
 }
 
-type CalcMode = "dates" | "duration" | "rate";
+type CalcMode = "interest" | "rate";
 
 export function InterestCalculator({ userName }: InterestCalculatorProps) {
-  const [mode, setMode] = useState<CalcMode>("dates");
+  const [mode, setMode] = useState<CalcMode>("interest");
+  const [inputMode, setInputMode] = useState<"dates" | "duration">("dates");
 
   const [borrowerName, setBorrowerName] = useState("");
   const [principal, setPrincipal] = useState("");
@@ -43,7 +44,6 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
   const [days, setDays] = useState("");
 
   // Find-rate mode
-  const [rateSubMode, setRateSubMode] = useState<"dates" | "duration">("duration");
   const [interestPaid, setInterestPaid] = useState("");
   const [rateResult, setRateResult] = useState<RateResult | null>(null);
 
@@ -73,7 +73,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
 
     let calculationResult: InterestResult;
 
-    if (mode === "dates") {
+    if (mode === "interest" && inputMode === "dates") {
       const start = parseDate(startDate);
       if (!start) {
         toast({ title: "Error", description: "Please enter a valid start date (DD/MM/YYYY)", variant: "destructive" });
@@ -92,7 +92,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
       }
 
       calculationResult = calculateInterest(principalNum, rateNum, start, end);
-    } else if (mode === "duration") {
+    } else if (mode === "interest") {
       const yearsNum = parseFloat(years) || 0;
       const monthsNum = parseFloat(months) || 0;
       const daysNum = parseFloat(days) || 0;
@@ -117,7 +117,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
       }
 
       let totalDays = 0;
-      if (rateSubMode === "dates") {
+      if (inputMode === "dates") {
         const start = parseDate(startDate);
         const end = parseDate(endDate);
         if (!start || !end) {
@@ -184,11 +184,11 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         borrowerName={borrowerName}
         principal={parseFloat(principal)}
         rate={parseFloat(rate)}
-        startDate={mode === "dates" ? startDate : undefined}
-        endDate={mode === "dates" ? endDate : undefined}
-        durationYears={mode === "duration" ? (parseFloat(years) || 0) : undefined}
-        durationMonths={mode === "duration" ? (parseFloat(months) || 0) : undefined}
-        durationDays={mode === "duration" ? (parseFloat(days) || 0) : undefined}
+        startDate={inputMode === "dates" ? startDate : undefined}
+        endDate={inputMode === "dates" ? endDate : undefined}
+        durationYears={inputMode === "duration" ? (parseFloat(years) || 0) : undefined}
+        durationMonths={inputMode === "duration" ? (parseFloat(months) || 0) : undefined}
+        durationDays={inputMode === "duration" ? (parseFloat(days) || 0) : undefined}
         result={result}
         onBack={() => setShowStatement(false)}
         onNewCalculation={handleClear}
@@ -209,27 +209,15 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         <div className="flex rounded-lg bg-muted p-1 gap-1 flex-wrap">
           <button
             type="button"
-            onClick={() => { setMode("dates"); setRateResult(null); }}
+            onClick={() => { setMode("interest"); setRateResult(null); }}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              mode === "dates"
+              mode === "interest"
                 ? "bg-card text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Calendar className="w-4 h-4" />
-            Date Range
-          </button>
-          <button
-            type="button"
-            onClick={() => { setMode("duration"); setRateResult(null); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              mode === "duration"
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Clock className="w-4 h-4" />
-            Duration
+            <Calculator className="w-4 h-4" />
+            Find Interest
           </button>
           <button
             type="button"
@@ -314,36 +302,36 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
           </div>
         )}
 
-        {/* Find Rate sub-mode toggle */}
-        {mode === "rate" && (
-          <div className="flex rounded-lg bg-muted p-1 gap-1">
-            <button
-              type="button"
-              onClick={() => setRateSubMode("duration")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                rateSubMode === "duration"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Duration
-            </button>
-            <button
-              type="button"
-              onClick={() => setRateSubMode("dates")}
-              className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                rateSubMode === "dates"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Date Range
-            </button>
-          </div>
-        )}
+        {/* Date Range / Duration toggle */}
+        <div className="flex rounded-lg bg-muted p-1 gap-1">
+          <button
+            type="button"
+            onClick={() => setInputMode("dates")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+              inputMode === "dates"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            Date Range
+          </button>
+          <button
+            type="button"
+            onClick={() => setInputMode("duration")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+              inputMode === "duration"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Duration
+          </button>
+        </div>
 
         {/* Date Range */}
-        {(mode === "dates" || (mode === "rate" && rateSubMode === "dates")) && (
+        {inputMode === "dates" && (
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="startDate" className="flex items-center gap-2">
@@ -363,7 +351,7 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         )}
 
         {/* Duration */}
-        {(mode === "duration" || (mode === "rate" && rateSubMode === "duration")) && (
+        {inputMode === "duration" && (
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-2">
               <Label htmlFor="years" className="flex items-center gap-2">

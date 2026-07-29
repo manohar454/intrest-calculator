@@ -3,6 +3,29 @@ import { cn } from "@/lib/utils";
 
 const ITEM_H = 40;
 
+let audioCtx: AudioContext | null = null;
+function playTick() {
+  try {
+    const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!Ctx) return;
+    if (!audioCtx) audioCtx = new Ctx();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(1400, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.045, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  } catch {
+    /* audio unavailable */
+  }
+}
+
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -20,6 +43,7 @@ interface WheelColumnProps {
 function WheelColumn({ values, labels, value, onChange, ariaLabel, width }: WheelColumnProps) {
   const ref = useRef<HTMLDivElement>(null);
   const timer = useRef<number | null>(null);
+  const lastTickIndex = useRef<number>(-1);
   const index = Math.max(0, values.indexOf(value));
 
   useEffect(() => {
@@ -34,6 +58,14 @@ function WheelColumn({ values, labels, value, onChange, ariaLabel, width }: Whee
   const handleScroll = () => {
     const el = ref.current;
     if (!el) return;
+    const current = Math.min(
+      values.length - 1,
+      Math.max(0, Math.round(el.scrollTop / ITEM_H)),
+    );
+    if (current !== lastTickIndex.current) {
+      lastTickIndex.current = current;
+      playTick();
+    }
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => {
       const i = Math.round(el.scrollTop / ITEM_H);
