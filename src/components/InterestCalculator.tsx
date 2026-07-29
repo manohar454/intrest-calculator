@@ -184,11 +184,11 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         borrowerName={borrowerName}
         principal={parseFloat(principal)}
         rate={parseFloat(rate)}
-        startDate={mode === "dates" ? startDate : undefined}
-        endDate={mode === "dates" ? endDate : undefined}
-        durationYears={mode === "duration" ? (parseFloat(years) || 0) : undefined}
-        durationMonths={mode === "duration" ? (parseFloat(months) || 0) : undefined}
-        durationDays={mode === "duration" ? (parseFloat(days) || 0) : undefined}
+        startDate={inputMode === "dates" ? startDate : undefined}
+        endDate={inputMode === "dates" ? endDate : undefined}
+        durationYears={inputMode === "duration" ? (parseFloat(years) || 0) : undefined}
+        durationMonths={inputMode === "duration" ? (parseFloat(months) || 0) : undefined}
+        durationDays={inputMode === "duration" ? (parseFloat(days) || 0) : undefined}
         result={result}
         onBack={() => setShowStatement(false)}
         onNewCalculation={handleClear}
@@ -209,27 +209,15 @@ export function InterestCalculator({ userName }: InterestCalculatorProps) {
         <div className="flex rounded-lg bg-muted p-1 gap-1 flex-wrap">
           <button
             type="button"
-            onClick={() => { setMode("dates"); setRateResult(null); }}
+            onClick={() => { setMode("interest"); setRateResult(null); }}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              mode === "dates"
+              mode === "interest"
                 ? "bg-card text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Calendar className="w-4 h-4" />
-            Date Range
-          </button>
-          <button
-            type="button"
-            onClick={() => { setMode("duration"); setRateResult(null); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-              mode === "duration"
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Clock className="w-4 h-4" />
-            Duration
+            <Calculator className="w-4 h-4" />
+            Find Interest
           </button>
           <button
             type="button"
