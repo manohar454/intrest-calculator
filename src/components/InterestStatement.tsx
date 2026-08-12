@@ -42,19 +42,22 @@ export function InterestStatement({
   return (
     <div className="w-full max-w-2xl animate-scale-in">
       {/* Action Buttons */}
-      <div className="flex justify-between mb-4 no-print">
-        <Button onClick={onBack} variant="ghost" size="sm">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Calculator
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 no-print">
+        <Button onClick={onBack} variant="ghost" size="sm" className="px-2">
+          <ArrowLeft className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Back to Calculator</span>
+          <span className="sm:hidden ml-1">Back</span>
         </Button>
-        <div className="flex gap-2">
-          <Button onClick={handlePrint} variant="outline" size="sm">
-            <Printer className="w-4 h-4 mr-2" />
-            Print Statement
+        <div className="flex flex-1 justify-end gap-2">
+          <Button onClick={handlePrint} variant="outline" size="sm" className="px-2 sm:px-3">
+            <Printer className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Print Statement</span>
+            <span className="sm:hidden ml-1">Print</span>
           </Button>
-          <Button onClick={onNewCalculation} variant="gold" size="sm">
-            <RotateCcw className="w-4 h-4 mr-2" />
-            New Calculation
+          <Button onClick={onNewCalculation} variant="gold" size="sm" className="px-2 sm:px-3">
+            <RotateCcw className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">New Calculation</span>
+            <span className="sm:hidden ml-1">New</span>
           </Button>
         </div>
       </div>
@@ -63,35 +66,35 @@ export function InterestStatement({
       <Card className="shadow-card print-statement overflow-hidden">
         <CardContent className="p-0">
           {/* Header */}
-          <div className="gradient-primary text-primary-foreground px-6 py-6 text-center">
-            <h1 className="text-2xl font-serif font-bold mb-1">INTEREST STATEMENT</h1>
+          <div className="gradient-primary text-primary-foreground px-4 py-5 text-center sm:px-6 sm:py-6">
+            <h1 className="mb-1 font-serif text-xl font-bold sm:text-2xl">INTEREST STATEMENT</h1>
           </div>
 
           {/* Content */}
-          <div className="p-6 space-y-6">
+          <div className="p-4 space-y-5 sm:p-6 sm:space-y-6">
             {/* Borrower Info */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Borrower Name</p>
-                <p className="font-semibold text-lg">{borrowerName}</p>
+                <p className="break-words font-semibold text-base sm:text-lg">{borrowerName}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Principal Amount</p>
-                <p className="font-semibold text-lg">{formatCurrency(principal)}</p>
+                <p className="break-words font-semibold text-base sm:text-lg">{formatCurrency(principal)}</p>
               </div>
             </div>
 
             <div className="h-px bg-border" />
 
             {/* Rate and Method */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Interest Rate</p>
-                <p className="font-semibold">₹{rate} per ₹100 per month</p>
+                <p className="break-words font-semibold text-sm sm:text-base">₹{rate} per ₹100 per month</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Interest Method</p>
-                <p className="font-semibold">Banking / PN Loan Method</p>
+                <p className="break-words font-semibold text-sm sm:text-base">Banking / PN Loan Method</p>
                 <p className="text-xs text-muted-foreground">(1 Month = 30 Days)</p>
               </div>
             </div>
@@ -101,7 +104,7 @@ export function InterestStatement({
             {/* Loan Period */}
             <div>
               <p className="text-sm text-muted-foreground mb-2">Loan Period</p>
-              <div className={`grid gap-4 ${isDurationMode ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-2 md:grid-cols-4'}`}>
+              <div className={`grid gap-3 sm:gap-4 ${isDurationMode ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-2 md:grid-cols-4'}`}>
                 {!isDurationMode && (
                   <>
                     <div>
@@ -144,24 +147,24 @@ export function InterestStatement({
               <p className="text-sm text-muted-foreground mb-3">Interest Calculation</p>
               
               {/* Simple Interest */}
-              <div className="bg-muted/30 rounded-lg p-4 mb-3">
-                <div className="flex justify-between items-center mb-2">
+              <div className="bg-muted/30 rounded-lg p-3 mb-3 sm:p-4">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-1">
                   <span className="font-medium">Simple Interest</span>
-                  <span className="text-xl font-bold text-primary">{formatCurrency(result.simpleInterest)}</span>
+                  <span className="text-lg font-bold text-primary sm:text-xl">{formatCurrency(result.simpleInterest)}</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs sm:text-sm">
                   <span className="text-muted-foreground">Total Amount (Principal + SI)</span>
                   <span className="font-semibold">{formatCurrency(result.totalAmountSI)}</span>
                 </div>
               </div>
 
               {/* Compound Interest */}
-              <div className="bg-gold/10 rounded-lg p-4 border border-gold/20">
-                <div className="flex justify-between items-center mb-2">
+              <div className="bg-gold/10 rounded-lg p-3 border border-gold/20 sm:p-4">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-1">
                   <span className="font-medium">Compound Interest</span>
-                  <span className="text-xl font-bold text-gold-dark">{formatCurrency(result.compoundInterest)}</span>
+                  <span className="text-lg font-bold text-gold-dark sm:text-xl">{formatCurrency(result.compoundInterest)}</span>
                 </div>
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-xs sm:text-sm">
                   <span className="text-muted-foreground">Total Amount (Principal + CI)</span>
                   <span className="font-semibold">{formatCurrency(result.totalAmountCI)}</span>
                 </div>
