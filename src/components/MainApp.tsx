@@ -15,21 +15,21 @@ export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onL
   const [activeTab, setActiveTab] = useState<TabType>("interest");
 
   return (
-    <div ref={ref} className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div ref={ref} className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50 no-print">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center">
+        <div className="container mx-auto px-3 py-3 flex items-center justify-between gap-2 sm:px-4 sm:py-4">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="w-9 h-9 shrink-0 rounded-lg gradient-primary flex items-center justify-center sm:w-10 sm:h-10">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="font-serif font-bold text-lg">Interest Calculator</h1>
+            <div className="min-w-0">
+              <h1 className="truncate font-serif font-bold text-base sm:text-lg">Interest Calculator</h1>
               <p className="text-xs text-muted-foreground">PN Loan Method</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
               <User className="w-4 h-4" />
               <span>{userName}</span>
@@ -43,12 +43,12 @@ export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onL
       </header>
 
       {/* Tab Navigation */}
-      <div className="container mx-auto px-4 py-4 no-print">
-        <div className="flex justify-center gap-2">
+      <div className="container mx-auto px-3 py-4 no-print sm:px-4">
+        <div className="flex flex-wrap justify-center gap-2">
           <Button
             onClick={() => setActiveTab("interest")}
             variant={activeTab === "interest" ? "default" : "outline"}
-            className="gap-2"
+            className="gap-2 text-sm"
           >
             <TrendingUp className="w-4 h-4" />
             Interest Calculator
@@ -56,7 +56,7 @@ export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onL
           <Button
             onClick={() => setActiveTab("calculator")}
             variant={activeTab === "calculator" ? "default" : "outline"}
-            className="gap-2"
+            className="gap-2 text-sm"
           >
             <Calculator className="w-4 h-4" />
             Calculator
@@ -65,7 +65,7 @@ export const MainApp = forwardRef<HTMLDivElement, MainAppProps>(({ userName, onL
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 flex justify-center">
+      <main className="container mx-auto px-3 py-6 flex justify-center sm:px-4">
         {activeTab === "interest" ? (
           <InterestCalculator userName={userName} />
         ) : (
